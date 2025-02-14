@@ -1,46 +1,10 @@
 <template>
-  <div class="topContainer">
-    <button @click="showApiKeyManagement = !showApiKeyManagement">
-      <template v-if="showApiKeyManagement">Hide</template>
-      <template v-else>Show</template> Api Keys
-    </button>
-    <template v-if="showApiKeyManagement">
-
-      <ImportButton @loaded="onImportDataLoaded" :buttonText="'Import Api Keys'" :accept="'.json,.txt'"></ImportButton>
-      <button @click="exportApiKeys">Export Api Keys</button>
-
-      <div class="p-relative">
-        <a class="gw2-account-link" href="https://account.arena.net/applications"
-          target="_blank">https://account.arena.net/applications</a>
-        <div>
-          <input ref="addKeyInput" type="text" v-model="newApiKey" v-on:keyup.enter="addApiKey" class="add-input"
-            placeholder="Api Key">
-          <button @click="addApiKey" :disabled="!newApiKey" class="add-btn">Add</button>
-        </div>
-      </div>
-    </template>
-  </div>
 
   <div>
 
-    <div v-if="showApiKeyManagement">
-      <table class="api-keys">
-        <tr v-for="(entry, idx) in apiKeys">
-          <td>{{ entry.name }}</td>
-          <td>{{ entry.apiKey }}</td>
-          <td>
-            <button @click="removeApiKey(idx)">X</button>
-          </td>
-        </tr>
-      </table>
-    </div>
-
     <div v-if="apiKeys.length">
-      <button @click="loadInfo">Load</button>
 
       <div v-if="matches">
-        <h3>WvW Matches</h3>
-
         <table class="matchesOverview jtm-table">
           <tbody>
             <tr v-for="m in matches.filter(x => x.hasAccountsInMatch)">
@@ -66,6 +30,43 @@
           <td>{{ entry.region }}</td>
           <td>{{ entry.team }}</td>
           <td>{{ entry.name }}</td>
+        </tr>
+      </table>
+
+      <button @click="loadInfo">Load</button>
+    </div>
+
+    <div class="topContainer">
+      <button @click="showApiKeyManagement = !showApiKeyManagement">
+        <template v-if="showApiKeyManagement">Hide</template>
+        <template v-else>Show</template> Api Keys
+      </button>
+      <template v-if="showApiKeyManagement">
+
+        <ImportButton @loaded="onImportDataLoaded" :buttonText="'Import Api Keys'" :accept="'.json,.txt'">
+        </ImportButton>
+        <button @click="exportApiKeys">Export Api Keys</button>
+
+        <div class="p-relative">
+          <a class="gw2-account-link" href="https://account.arena.net/applications"
+            target="_blank">https://account.arena.net/applications</a>
+          <div>
+            <input ref="addKeyInput" type="text" v-model="newApiKey" v-on:keyup.enter="addApiKey" class="add-input"
+              placeholder="Api Key">
+            <button @click="addApiKey" :disabled="!newApiKey" class="add-btn">Add</button>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div v-if="showApiKeyManagement">
+      <table class="api-keys">
+        <tr v-for="(entry, idx) in apiKeys">
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.apiKey }}</td>
+          <td>
+            <button @click="removeApiKey(idx)">X</button>
+          </td>
         </tr>
       </table>
     </div>
