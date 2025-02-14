@@ -1,0 +1,167 @@
+[
+    {
+        "id": 11001,
+        "name": "Moogooloo",
+        "region": "NA"
+    },
+    {
+        "id": 11002,
+        "name": "Rall's Rest",
+        "region": "NA"
+    },
+    {
+        "id": 11003,
+        "name": "Domain of Torment",
+        "region": "NA"
+    },
+    {
+        "id": 11004,
+        "name": "Yohlon Haven",
+        "region": "NA"
+    },
+    {
+        "id": 11005,
+        "name": "Tombs of Drascir",
+        "region": "NA"
+    },
+    {
+        "id": 11006,
+        "name": "Hall of Judgment",
+        "region": "NA"
+    },
+    {
+        "id": 11007,
+        "name": "Throne of Balthazar",
+        "region": "NA"
+    },
+    {
+        "id": 11008,
+        "name": "Dwayna's Temple",
+        "region": "NA"
+    },
+    {
+        "id": 11009,
+        "name": "Abaddon's Prison",
+        "region": "NA"
+    },
+    {
+        "id": 11010,
+        "name": "Ruined Cathedral of Blood",
+        "region": "NA"
+    },
+    {
+        "id": 11011,
+        "name": "Lutgardis Conservatory",
+        "region": "NA"
+    },
+    {
+        "id": 11012,
+        "name": "Mosswood",
+        "region": "NA"
+    },
+    {
+        "id": 11013,
+        "name": "Mithric Cliffs",
+        "region": "NA"
+    },
+    {
+        "id": 11014,
+        "name": "Lagula's Kraal",
+        "region": "NA"
+    },
+    {
+        "id": 11015,
+        "name": "De Molish Post",
+        "region": "NA"
+    },
+    {
+        "id": 12001,
+        "name": "Skrittsburgh",
+        "region": "EU"
+    },
+    {
+        "id": 12002,
+        "name": "Fortune's Vale",
+        "region": "EU"
+    },
+    {
+        "id": 12003,
+        "name": "Silent Woods",
+        "region": "EU"
+    },
+    {
+        "id": 12004,
+        "name": "Ettin's Back",
+        "region": "EU"
+    },
+    {
+        "id": 12005,
+        "name": "Domain of Anguish",
+        "region": "EU"
+    },
+    {
+        "id": 12006,
+        "name": "Palawadan",
+        "region": "EU"
+    },
+    {
+        "id": 12007,
+        "name": "Bloodstone Gulch",
+        "region": "EU"
+    },
+    {
+        "id": 12008,
+        "name": "Frost Citadel",
+        "region": "EU"
+    },
+    {
+        "id": 12009,
+        "name": "Dragrimmar",
+        "region": "EU"
+    },
+    {
+        "id": 12010,
+        "name": "Grenth's Door",
+        "region": "EU"
+    },
+    {
+        "id": 12011,
+        "name": "Mirror of Lyssa",
+        "region": "EU"
+    },
+    {
+        "id": 12012,
+        "name": "Melandru's Dome",
+        "region": "EU"
+    },
+    {
+        "id": 12013,
+        "name": "Kormir's Library",
+        "region": "EU"
+    },
+    {
+        "id": 12014,
+        "name": "Great House Aviary",
+        "region": "EU"
+    },
+    {
+        "id": 12015,
+        "name": "Bava Nisos",
+        "region": "EU"
+    },
+    {
+        "id": 12016,
+        "name": "Temple of Febe",
+        "region": "EU"
+    },
+    {
+        "id": 12017,
+        "name": "Gyala Hatchery",
+        "region": "EU"
+    },
+    {
+        "id": 12018,
+        "name": "Grekvelnn Burrows",
+        "region": "EU"
+    }
+]
