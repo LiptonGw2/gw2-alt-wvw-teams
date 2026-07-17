@@ -4,10 +4,17 @@
 
     <div v-if="apiKeys.length">
 
+      <div>
+        <button @click="showGuilds = !showGuilds">
+          <template v-if="showGuilds">Hide</template>
+          <template v-else>Show</template> Guilds
+        </button>
+      </div>
+
       <div v-if="matches">
         <table class="matchesOverview jtm-table">
           <tbody>
-            <tr v-for="m in matches.filter(x => x.hasAccountsInMatch)">
+            <tr v-for="m in matches.filter(x => x.region == 'EU' || x.hasAccountsInMatch)">
               <td>{{ m.region }}</td>
               <td>{{ m.tier }}</td>
               <template v-for="team in m.teams">
@@ -16,6 +23,10 @@
                     {{ team.name }}
                   </div>
                   <div v-for="acc in team.accounts">- {{ acc.name }}</div>
+                  <div v-if="showGuilds && guildsPerMatch && guildsPerMatch[m.id]">
+                    <span class="guildEntry" v-for="g in guildsPerMatch[m.id][team.color]">{{ g.name }} [{{ g.tag
+                      }}]</span>
+                  </div>
                 </td>
                 <td v-bind:class="'text-' + team.color">{{ m.kds[team.color] }}</td>
               </template>
@@ -90,7 +101,10 @@ export default {
       newApiKey: null,
       teamNames,
       apiKeys: [],
-      matches: null
+      matches: null,
+      guildClaims: null,
+      guildsPerMatch: null,
+      showGuilds: false
     }
   },
   methods: {
@@ -198,6 +212,113 @@ export default {
       }
     },
 
+    /**
+     * Aggregates all unique guild IDs claiming objectives per team, for EU matches only.
+     * @param {Array} matches - The array of match objects returned by the GW2 API.
+     * @returns {Object} An object grouped by match ID and team colors with arrays of unique guild IDs.
+     */
+    getEUGuildClaims(matches) {
+      const euClaims = {};
+
+      matches.forEach(match => {
+        // Filter out NA matches
+        if (!match.id || !match.id.startsWith('2-')) {
+          return;
+        }
+
+        euClaims[match.id] = {
+          red: new Set(),
+          blue: new Set(),
+          green: new Set()
+        };
+
+        if (match.maps && Array.isArray(match.maps)) {
+          match.maps.forEach(map => {
+
+            if (map.objectives && Array.isArray(map.objectives)) {
+              map.objectives.forEach(obj => {
+
+                if (obj.claimed_by && obj.owner) {
+                  const teamColor = obj.owner.toLowerCase();
+                  if (euClaims[match.id][teamColor]) {
+                    euClaims[match.id][teamColor].add(obj.claimed_by);
+                  }
+                }
+              });
+            }
+          });
+        }
+
+        euClaims[match.id].red = Array.from(euClaims[match.id].red);
+        euClaims[match.id].blue = Array.from(euClaims[match.id].blue);
+        euClaims[match.id].green = Array.from(euClaims[match.id].green);
+      });
+
+      this.populateGuildNames(euClaims);
+
+      return euClaims;
+    },
+
+    /**
+   * Takes the grouped euClaims object, fetches all guild names in bulk,
+   * and replaces the raw IDs with objects containing name and tag.
+   * @param {Object} euClaims - The output from your previous function.
+   * @returns {Promise<Object>} The updated claims object with rich guild data.
+   */
+    async populateGuildNames(euClaims) {
+      const allIdsSet = new Set();
+
+      Object.values(euClaims).forEach(matchTeams => {
+        matchTeams.red.forEach(id => allIdsSet.add(id));
+        matchTeams.blue.forEach(id => allIdsSet.add(id));
+        matchTeams.green.forEach(id => allIdsSet.add(id));
+      });
+
+      const uniqueIds = Array.from(allIdsSet);
+
+      if (uniqueIds.length === 0) {
+        return euClaims;
+      }
+
+      const guildLookup = {};
+
+      // Fetch one guild at a time, concurrently
+      const fetchPromises = uniqueIds.map(async (id) => {
+        try {
+          const response = await fetch(`https://api.guildwars2.com/v2/guild/${id}`);
+
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+
+          const guild = await response.json();
+          guildLookup[id] = {
+            name: guild.name,
+            tag: guild.tag
+          };
+        } catch (error) {
+          console.error(`Failed to fetch guild ${id}:`, error);
+          // Leave it out of guildLookup, fallback handled below
+        }
+      });
+
+      await Promise.all(fetchPromises);
+
+      const finalClaims = {};
+
+      Object.keys(euClaims).forEach(matchId => {
+        finalClaims[matchId] = {
+          red: euClaims[matchId].red.map(id => guildLookup[id] ? { id, ...guildLookup[id] } : { id, name: 'Unknown Guild', tag: '???' }),
+          blue: euClaims[matchId].blue.map(id => guildLookup[id] ? { id, ...guildLookup[id] } : { id, name: 'Unknown Guild', tag: '???' }),
+          green: euClaims[matchId].green.map(id => guildLookup[id] ? { id, ...guildLookup[id] } : { id, name: 'Unknown Guild', tag: '???' })
+        };
+      });
+
+      this.guildsPerMatch = finalClaims;
+
+      return finalClaims;
+    },
+
     loadMatchInfo() {
 
       let ids = "2-1,2-2,2-3,2-4,2-5,1-1,1-2,1-3,1-4";
@@ -240,7 +361,8 @@ export default {
               deaths: entry.deaths,
               kds,
               teams,
-              hasAccountsInMatch: false
+              hasAccountsInMatch: false,
+              id: entry.id
             });
           }
 
@@ -248,6 +370,8 @@ export default {
           this.checkMatchAccounts();
 
           console.log(this.matches);
+
+          this.guildClaims = this.getEUGuildClaims(data);
         });
     },
 
@@ -336,5 +460,14 @@ export default {
 
 .v-long-name {
   font-size: 15px !important;
+}
+
+.guildEntry {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 8px;
+  color: greenyellow;
+  white-space: nowrap;
+  display: inline-block;
 }
 </style>
