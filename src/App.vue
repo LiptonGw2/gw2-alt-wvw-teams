@@ -28,7 +28,8 @@
         <tr v-for="(entry, idx) in apiKeys">
           <td>{{ idx + 1 }}.</td>
           <td>{{ entry.region }}</td>
-          <td>{{ entry.team }}</td>
+          <td>{{ entry.team_id }}</td>
+          <td><template v-if="entry.team_id">{{ entry.team }}</template></td>
           <td>{{ entry.name }}</td>
         </tr>
       </table>
@@ -62,6 +63,7 @@
     <div v-if="showApiKeyManagement">
       <table class="api-keys">
         <tr v-for="(entry, idx) in apiKeys">
+          <td>{{ entry.team_id }}</td>
           <td>{{ entry.name }}</td>
           <td>{{ entry.apiKey }}</td>
           <td>
